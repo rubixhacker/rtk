@@ -17,6 +17,7 @@ mod gh_cmd;
 mod git;
 mod go_cmd;
 mod golangci_cmd;
+mod gradle_cmd;
 mod grep_cmd;
 mod hook_audit_cmd;
 mod init;
@@ -519,6 +520,12 @@ enum Commands {
         command: GoCommands,
     },
 
+    /// Gradle commands with compact output
+    Gradle {
+        #[command(subcommand)]
+        command: GradleCommands,
+    },
+
     /// golangci-lint with compact output
     #[command(name = "golangci-lint")]
     GolangciLint {
@@ -845,6 +852,37 @@ enum GoCommands {
         args: Vec<String>,
     },
     /// Passthrough: runs any unsupported go subcommand directly
+    #[command(external_subcommand)]
+    Other(Vec<OsString>),
+}
+
+#[derive(Subcommand)]
+enum GradleCommands {
+    /// Build with compact output
+    Build {
+        /// Additional gradle build arguments
+        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+        args: Vec<String>,
+    },
+    /// Test with failures-only output
+    Test {
+        /// Additional gradle test arguments
+        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+        args: Vec<String>,
+    },
+    /// Check with compact output
+    Check {
+        /// Additional gradle check arguments
+        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+        args: Vec<String>,
+    },
+    /// Run with compact output
+    Run {
+        /// Additional gradle run arguments
+        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+        args: Vec<String>,
+    },
+    /// Passthrough: runs any unsupported gradle subcommand directly
     #[command(external_subcommand)]
     Other(Vec<OsString>),
 }
@@ -1416,6 +1454,29 @@ fn main() -> Result<()> {
             }
             GoCommands::Other(args) => {
                 go_cmd::run_other(&args, cli.verbose)?;
+            }
+        },
+
+        Commands::Gradle { command } => match command {
+            GradleCommands::Build { args } => {
+                gradle_cmd::run(gradle_cmd::GradleCommand::Build, &args, cli.verbose)?;
+            }
+            GradleCommands::Test { args } => {
+                gradle_cmd::run(gradle_cmd::GradleCommand::Test, &args, cli.verbose)?;
+            }
+            GradleCommands::Check { args } => {
+                gradle_cmd::run(gradle_cmd::GradleCommand::Check, &args, cli.verbose)?;
+            }
+            GradleCommands::Run { args } => {
+                gradle_cmd::run(gradle_cmd::GradleCommand::Run, &args, cli.verbose)?;
+            }
+            GradleCommands::Other(args) => {
+                // Convert OsString args to String
+                let args: Vec<String> = args
+                    .iter()
+                    .map(|s| s.to_string_lossy().into_owned())
+                    .collect();
+                gradle_cmd::run(gradle_cmd::GradleCommand::Other, &args, cli.verbose)?;
             }
         },
 

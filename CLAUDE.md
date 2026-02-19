@@ -229,6 +229,7 @@ rtk gain --history | grep proxy
 | pip_cmd.rs | pip/uv package manager | JSON parsing, auto-detect uv (70-85% reduction) |
 | go_cmd.rs | Go commands | NDJSON for test, text for build/vet (80-90% reduction) |
 | golangci_cmd.rs | golangci-lint | JSON parsing, group by rule (85% reduction) |
+| gradle_cmd.rs | Gradle | Summary/errors only, test results (85-90% reduction) |
 | tee.rs | Full output recovery | Save raw output to file on failure, print hint for LLM re-read |
 | utils.rs | Shared utilities | Package manager detection, common formatting |
 | discover/ | Claude Code history analysis | Scan JSONL sessions, classify commands, report missed savings |
@@ -390,6 +391,14 @@ pub fn execute_with_filter(cmd: &str, args: &[&str]) -> Result<()> {
   - `rtk golangci-lint`: JSON parsing grouped by rule (85% reduction)
 - **Architecture**: Standalone Python commands (mirror lint/prettier), Go sub-enum (mirror git/cargo)
 - **Patterns**: JSON for structured output (ruff check, golangci-lint, pip), NDJSON streaming (go test), text state machine (pytest), text filters (go build/vet, ruff format)
+
+### Java & Gradle Support
+- **Commands**: `rtk gradle build/test/check/run`
+- **Features**:
+  - `build`: Summary of tasks, failures only
+  - `test`: Test failure details + summary (90% reduction)
+  - `run`: Stripped task execution logs
+  - Auto-detection of `./gradlew` vs `gradle`
 
 ## Testing Strategy
 

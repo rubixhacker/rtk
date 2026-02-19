@@ -224,6 +224,8 @@ PYTHON            ruff_cmd.rs       ruff check/format      80%+       ✓
 GO                go_cmd.rs         go test/build/vet      75-90%     ✓
                   golangci_cmd.rs   golangci-lint          85%        ✓
 
+JAVA/GRADLE       gradle_cmd.rs     gradle build/test/run  85-90%     ✓
+
 NETWORK           wget_cmd.rs       wget                   85-95%     ✓
 
 DEPENDENCIES      deps.rs           deps                   80-90%     ✓

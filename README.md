@@ -282,6 +282,12 @@ rtk go test                      # NDJSON streaming parser (90% reduction)
 rtk go build                     # Build errors only (80% reduction)
 rtk go vet                       # Vet issues (75% reduction)
 rtk golangci-lint run            # JSON grouped by rule (85% reduction)
+
+# Java / Gradle
+rtk gradle build                 # Build summary/errors only (85% reduction)
+rtk gradle test                  # Test failures only (90% reduction)
+rtk gradle check                 # Check tasks summary
+rtk gradle run                   # Run with stripped task log
 ```
 
 ## Examples
